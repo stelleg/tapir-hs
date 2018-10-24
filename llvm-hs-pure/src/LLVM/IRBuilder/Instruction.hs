@@ -373,7 +373,17 @@ select cond t f = do
 condBr :: MonadIRBuilder m => Operand -> Name -> Name -> m ()
 condBr cond tdest fdest = emitTerm $ CondBr cond tdest fdest []
 
+detach :: MonadIRBuilder m => Operand -> Name -> Name -> m ()
+detach syncvar lfork rfork = emitTerm $ Detach cond lfork rfork []
+
+reattach :: MonadIRBuilder m => Operand -> Name -> m ()
+reattach syncvar rfork = emitTerm $ Reattach cond rfork []
+
+sync :: MonadIRBuilder m => Operand -> Name -> m ()
+sync syncvar cont = emitTerm $ Sync cond cont []
+
 -- | See <https://llvm.org/docs/LangRef.html#unreachable-instruction reference>.
+
 unreachable :: MonadIRBuilder m => m ()
 unreachable = emitTerm $ Unreachable []
 
