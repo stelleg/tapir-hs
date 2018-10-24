@@ -46,6 +46,15 @@ foreign import ccall unsafe "LLVMBuildBr" buildBr ::
 foreign import ccall unsafe "LLVMBuildCondBr" buildCondBr ::
   Ptr Builder -> Ptr Value -> Ptr BasicBlock -> Ptr BasicBlock -> IO (Ptr Instruction)
 
+foreign import ccall unsafe "LLVMBuildDetach" buildDetach ::
+  Ptr Builder -> Ptr Value -> Ptr BasicBlock -> Ptr BasicBlock -> IO (Ptr Instruction)
+
+foreign import ccall unsafe "LLVMBuildReattach" buildReattach ::
+  Ptr Builder -> Ptr Value -> Ptr BasicBlock -> IO (Ptr Instruction)
+
+foreign import ccall unsafe "LLVMBuildSync" buildSync ::
+  Ptr Builder -> Ptr Value -> Ptr BasicBlock -> IO (Ptr Instruction)
+
 foreign import ccall unsafe "LLVMBuildSwitch" buildSwitch ::
   Ptr Builder -> Ptr Value -> Ptr BasicBlock -> CUInt -> IO (Ptr Instruction)
 

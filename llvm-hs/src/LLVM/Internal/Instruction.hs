@@ -191,6 +191,18 @@ instance DecodeM DecodeAST A.Terminator (Ptr FFI.Instruction) where
           A.defaultUnwindDest = unwindDest,
           A.metadata' = md
         }
+      [instrP|Detach|] -> do
+        syncvar <- op 0
+        leftFork <- successor 1
+        rightFork <- successor 2
+        return $ A.Detach {
+          A.condition = syncvar,
+          A.leftFork = leftFork,
+          A.rightFork = rightFork,
+          A.metadata' = md
+        }
+      [instrP|Reattach|] -> A.Detach <$> op 0 <*> successor 1 <*> pure md
+      [instrP|Sync|] -> A.Detach <$> op 0 <*> successor 1 <*> pure md
       i -> error ("Unknown terminator instruction kind: " <> show i)
 
 instance EncodeM EncodeAST A.Terminator (Ptr FFI.Instruction) where
@@ -287,6 +299,19 @@ instance EncodeM EncodeAST A.Terminator (Ptr FFI.Instruction) where
         i <- liftIO $ FFI.buildCatchSwitch builder parentPad' unwindDest' numHandlers
         mapM_ (liftIO . FFI.catchSwitchAddHandler i <=< encodeM) catchHandlers
         return i
+      A.Detach { A.syncvar = sv, A.leftFork = l, A.rightFork = r } -> do
+        sv <- encodeM sv 
+        rf <- encodeM l
+        lf <- encodeM r
+        FFI.upCast <$> do liftIO $ FFI.buildDetach builder sv lf rf
+      A.Reattach { A.syncvar = sv, A.rightFork = r } -> do
+        sv <- encodeM sv 
+        rf <- encodeM r
+        FFI.upCast <$> do liftIO $ FFI.buildReattach builder sv rf
+      A.Sync { A.syncvar = sv, A.continuation = c } -> do
+        sv <- encodeM sv 
+        c <- encodeM c 
+        FFI.upCast <$> do liftIO $ FFI.buildSync builder sv c
     setMD t' (A.metadata' t)
     return t'
 
