@@ -1,4 +1,4 @@
-# llvm-hs - Haskell bindings for LLVM
+# tapir-hs - Haskell bindings for Tapir-LLVM
 
 [![Build Status](https://github.com/llvm-hs/llvm-hs/actions/workflows/ci.yml/badge.svg)](https://github.com/llvm-hs/llvm-hs/actions/workflows/ci.yml) [![Hackage](https://img.shields.io/hackage/v/llvm-hs.svg)](https://hackage.haskell.org/package/llvm-hs)
 
